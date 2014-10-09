@@ -4,10 +4,17 @@ namespace NoccyLabs\Joystick;
 
 class JoystickState
 {
-    public function __construct(array $axis, array $buttons)
+    protected $axis;
+    
+    protected $button;
+    
+    protected $mapping;
+
+    public function __construct(array $axis, array $buttons, array $mapping = null)
     {
         $this->axis = $axis;
-        $this->buttons = $buttons;
+        $this->button = $buttons;
+        $this->mapping = $mapping;
     }
     
     /**
@@ -17,7 +24,7 @@ class JoystickState
      */
     public function getAllButtons()
     {
-        return $this->buttons;
+        return $this->button;
     }
     
     public function getButton($index)
@@ -38,6 +45,26 @@ class JoystickState
     public function getAxis($index)
     {
         return $this->axis[$index];
+    }
+    
+    public function getPressedButtons()
+    {
+        $pressed = array();
+        foreach($this->button as $index=>$state) {
+            if ($state) { $pressed[] = $this->getButtonName($index); }
+        }
+        return join("+",$pressed);
+    }
+    
+    public function getButtonName($index)
+    {
+        if (array_key_exists("button", $this->mapping)) {
+            $buttonmap = $this->mapping['button'];
+            if (array_key_exists($index, $buttonmap)) {
+                return $buttonmap[$index];
+            }
+        }
+        return $index;
     }
 }
 

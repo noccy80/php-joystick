@@ -22,6 +22,10 @@ class Joystick
     
     protected $state_button = array();
 
+    protected $mapping = array();
+
+    protected $state = null;
+
     public function __construct($index=0)
     {
         if (is_int($index)) {
@@ -29,6 +33,11 @@ class Joystick
         } else {
             $this->open($index);
         }
+    }
+    
+    public function setControllerMap(array $map = null)
+    {
+        $this->mapping = $map;
     }
     
     protected function open($jsfile)
@@ -83,7 +92,8 @@ class Joystick
     {
         // Process as long as there are new events to chomp
         while ($this->getRawEvent());
-        return new JoystickState($this->state_axis, $this->state_button);
+        $this->state = new JoystickState($this->state_axis, $this->state_button, $this->mapping);
+        return $this->state;
     }
     
     protected function parseRawEvent(array $event)
