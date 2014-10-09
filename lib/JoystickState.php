@@ -47,13 +47,13 @@ class JoystickState
         return $this->axis[$index];
     }
     
-    public function getPressedButtons()
+    public function getPressedButtons($separator="+")
     {
         $pressed = array();
         foreach($this->button as $index=>$state) {
             if ($state) { $pressed[] = $this->getButtonName($index); }
         }
-        return join("+",$pressed);
+        return join($separator,$pressed);
     }
     
     public function getButtonName($index)

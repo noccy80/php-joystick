@@ -8,17 +8,10 @@ $js = new Joystick;
 
 $js->setControllerMap(array(
     "button" => array(
-        0 => "A",
-        1 => "B",
-        2 => "X",
-        3 => "Y",
-        4 => "Lb",
-        5 => "Rb",
-        6 => "back",
-        7 => "start",
-        8 => "circle",
-        9 => "stick1",
-        10 => "stick2"
+        "A", "B", "X", "Y",
+        "Lb", "Rb",
+        "back", "start", "circle",
+        "stick1", "stick2"
     )
 ));
 
