@@ -48,11 +48,23 @@ class Joystick
         $this->fh = null;
     }
     
+    /**
+     * Read a raw event from the opened /dev/input/jsX file. The size and 
+     * unpack pattern for the struct is defined as SIZEOF_JS_EVENT and
+     * STRUCT_JS_EVENT.
+     *
+     * Uses stream_select to avoid setting the stream to non-blocking mode.
+     *
+     * @return array 
+     */
     public function getRawEvent()
     {
         $read = array($this->fh); $write = array(); $except = array();
         if (stream_select($read, $write, $except, 0)) {
             $evt_raw = fread($this->fh, SIZEOF_JS_EVENT);
+            if (!$evt_raw) {
+                return null;
+            }
             $evt_arr = unpack(STRUCT_JS_EVENT, $evt_raw);
             $this->parseRawEvent($evt_arr);
             return $evt_arr;
@@ -60,9 +72,17 @@ class Joystick
         return null;
     }
 
+    /**
+     * Update the internal state by reading and mapping all available events
+     * until getRawEvent returns null. getRawEvent does the parsing by calling
+     * on parseRawEvent.
+     *
+     * @return NoccyLabs\Joystick\JoystickState
+     */
     public function update()
     {
-        while ($this->getRawEvent()) { }
+        // Process as long as there are new events to chomp
+        while ($this->getRawEvent());
         return new JoystickState($this->state_axis, $this->state_button);
     }
     

@@ -9,8 +9,11 @@ $js = new Joystick;
 while(true) {
     $state = $js->update();
     
+    foreach ($state->getAllAxes() as $index=>$value) { 
+        printf("%d:%6d ", $index, $value);
+    }
     foreach ($state->getAllButtons() as $index=>$button) {
-        printf("Btn%d: %1d ", $index, $button);
+        printf("%d[%1d] ", $index, $button);
     }
     printf("\r");
     
