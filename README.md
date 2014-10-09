@@ -13,11 +13,6 @@ For development version:
     $ composer require noccylabs/joystick:dev-master
 
 
-For latest stable (which is *0.1* currently):
-
-    $ composer require noccylabs/joystick:0.1.*
-
-
 ## Examples
 
 Example 1: Using raw events

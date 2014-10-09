@@ -6,12 +6,20 @@ use NoccyLabs\Joystick\Joystick;
 
 $js = new Joystick;
 
+// Basic controller map for xbox360 usb gamepad
 $js->setControllerMap(array(
     "button" => array(
-        "A", "B", "X", "Y",
-        "Lb", "Rb",
-        "back", "start", "circle",
-        "stick1", "stick2"
+        0 => "A",
+        1 => "B",
+        2 => "X",
+        3 => "Y",
+        4 => "Lb",
+        5 => "Rb",
+        6 => "back",
+        7 => "start",
+        8 => "circle",
+        9 => "stick1",
+        10 => "stick2"
     )
 ));
 

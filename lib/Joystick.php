@@ -9,7 +9,11 @@ define("JS_EVENT_BUTTON",         0x01);    /* button pressed/released */
 define("JS_EVENT_AXIS",           0x02);    /* joystick moved */
 define("JS_EVENT_INIT",           0x80);    /* initial state of device */
 
-
+/**
+ * Class to access joystick events and states via /dev/input.
+ *
+ *
+ */
 class Joystick
 {
     protected $fh = null;
@@ -26,6 +30,16 @@ class Joystick
 
     protected $state = null;
 
+    /**
+     * Constructor. The parameter can either be an integer (referenced as N to
+     * /dev/input/jsN) or as a string, directly pointing at the input device
+     * filename. 
+     *
+     * Will indirectly throw a JoystickException on error, as open() is called
+     * by the constructor.
+     *
+     * @param int|string The joystick index or device filename
+     */
     public function __construct($index=0)
     {
         if (is_int($index)) {
@@ -35,20 +49,40 @@ class Joystick
         }
     }
     
+    /**
+     * Assign a map to the numerical indexes for buttons and axes. The array
+     * can have zero to two keys, namely "button" and "axis", both having an
+     * ordered array of the mapped names.
+     *
+     * For example, the map [ "button" => [ "A", "B", "C", "D"]] would make
+     * button 0 be named A, 1 be B etc.
+     *
+     * @param array Controller map
+     */
     public function setControllerMap(array $map = null)
     {
         $this->mapping = $map;
     }
-    
+
+    /**
+     * Open the device.
+     *
+     * @internal
+     */    
     protected function open($jsfile)
     {
         if (!(file_exists($jsfile) && is_readable($jsfile))) {
-            throw new \Exception("Unable to open {$jsfile}");
+            throw new JoystickException("Unable to open {$jsfile}");
         }
         
         $this->fh = fopen($jsfile, "rb");
     }
     
+    /**
+     * Close the device
+     *
+     * @internal
+     */
     protected function close()
     {
         if ($this->fh) {
@@ -96,6 +130,12 @@ class Joystick
         return $this->state;
     }
     
+    /**
+     * Apply a joystick event to the local state.
+     *
+     * @internal
+     * @param array The joystick event data
+     */
     protected function parseRawEvent(array $event)
     {
         if ($event['type'] & JS_EVENT_INIT) {

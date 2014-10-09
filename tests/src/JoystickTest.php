@@ -12,14 +12,16 @@ class JoystickTest extends \PhpUnit_Framework_TestCase
     
     public function testOpen()
     {
+        // Open a captured state file instead of the actual device
         $js = new Joystick(__DIR__."/../static/initial.js0");
     }
     
     /**
-     * @expectedException \Exception
+     * @expectedException NoccyLabs\Joystick\JoystickException
      */
     public function testOpenError()
     {
+        // There is hopefully no /dev/input/js255
         $js = new Joystick(255);
     }
     
