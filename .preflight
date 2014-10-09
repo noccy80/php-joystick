@@ -1,0 +1,2 @@
+apigen --source lib --destination docs/generated/apigen
+phpunit --testdox-text docs/generated/phpunit.log --coverage-html docs/generated/coverage

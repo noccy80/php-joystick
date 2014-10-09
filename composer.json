@@ -1,0 +1,16 @@
+{
+    "name": "noccylabs/joystick",
+    "description": "Joystick access via /dev/input (linux only)",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Christopher Vagnetoft",
+            "email": "cvagnetoft@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "NoccyLabs\\Joystick\\": "lib/"
+        }
+    }
+}
