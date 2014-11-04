@@ -4,7 +4,7 @@ require_once __DIR__."/../vendor/autoload.php";
 
 use NoccyLabs\Joystick\Joystick;
 
-$js = new Joystick;
+$js = new Joystick();
 
 while(true) {
     if (($ev = $js->getRawEvent())) {

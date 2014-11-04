@@ -4,7 +4,7 @@ namespace NoccyLabs\Joystick;
 
 define("SIZEOF_JS_EVENT", 8);
 define("STRUCT_JS_EVENT", "Ltime/svalue/Ctype/Cnumber");
-
+define("JS_EVENT_PATH",   "/dev/input");
 define("JS_EVENT_BUTTON",         0x01);    /* button pressed/released */
 define("JS_EVENT_AXIS",           0x02);    /* joystick moved */
 define("JS_EVENT_INIT",           0x80);    /* initial state of device */
@@ -30,6 +30,11 @@ class Joystick
 
     protected $state = null;
 
+    protected $dev_path = JS_EVENT_PATH;
+
+    const FIRST = -1;
+    const SECOND = -2;
+
     /**
      * Constructor. The parameter can either be an integer (referenced as N to
      * /dev/input/jsN) or as a string, directly pointing at the input device
@@ -40,13 +45,35 @@ class Joystick
      *
      * @param int|string The joystick index or device filename
      */
-    public function __construct($index=0)
+    public function __construct($index=self::FIRST)
     {
         if (is_int($index)) {
-            $this->open("/dev/input/js{$index}");
+            if ($index > 0) {
+                $jsindex = $index;
+                $this->open("{$this->dev_path}/js{$jsindex}");
+            } else {
+                $jsdev = $this->findJoystickByIndex(abs($index));
+                $this->open($jsdev);
+            }
         } else {
             $this->open($index);
         }
+    }
+    
+    protected function findJoystickByIndex($index)
+    {
+        $jsdev = glob("{$this->dev_path}/js*");
+        $found = 0;
+        foreach($jsdev as $dev) {
+            $th = @fopen($dev, "rb");
+            if ($th) {
+                fclose($th);
+                if (++$found >= $index) {
+                    return $dev;
+                }
+            }
+        }
+        throw new JoystickException("Unable to open connected joystick by index ({$index})");
     }
     
     /**
@@ -76,6 +103,9 @@ class Joystick
         }
         
         $this->fh = fopen($jsfile, "rb");
+        if (!$this->fh) {
+            throw new JoystickException("fopen({$jsfile}, rb) failed");
+        }
     }
     
     /**
